@@ -1,29 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Test Temp Hum</title>
+  <title>Realtime Temp & Hum</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+      background: #f4f4f4;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .panel {
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
 <body>
-  <h1>Temperature and Humidity</h1>
-  <p>Temp: <span id="temp">Loading...</span> °C</p>
-  <p>Hum: <span id="hum">Loading...</span> %</p>
+  <h1>🌡️ อุณหภูมิ & 💧 ความชื้นแบบเรียลไทม์</h1>
+
+  <div class="panel">
+    <h2>อุณหภูมิ (°C)</h2>
+    <p id="temp">Loading...</p>
+  </div>
+
+  <div class="panel">
+    <h2>ความชื้น (%)</h2>
+    <p id="hum">Loading...</p>
+  </div>
 
   <script>
     async function fetchData() {
       try {
-        const res = await fetch('http://192.168.1.108:5000/api/temp-hum');
-        if (!res.ok) throw new Error('HTTP error ' + res.status);
-        const data = await res.json();
+        const response = await fetch('http://192.168.1.108:5000/api/temp-hum');
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
         document.getElementById('temp').textContent = data.temperature;
         document.getElementById('hum').textContent = data.humidity;
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error('Error fetching data:', err);
         document.getElementById('temp').textContent = 'Error';
         document.getElementById('hum').textContent = 'Error';
       }
     }
-    fetchData();
+
+    fetchData(); // เรียกตอนโหลดหน้าเว็บ
+    setInterval(fetchData, 10000); // อัปเดตทุก 10 วินาที
   </script>
 </body>
 </html>
